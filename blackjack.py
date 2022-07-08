@@ -39,17 +39,21 @@ def convert(data):
 #d31xyjxoan40
 
 def manual_play():
+    money_to_bet = int(input("Enter starting money:"))
+    game = 1
     while True:
-        print('Enter 1 to play BlackJack')
+        print('\nEnter 1 to play BlackJack')
         print("Enter any key to exit\n")
         if input() == "1":
             deck_id = generate_deck(1)
 
             print(f"Game: {game}")
             game += 1
-            print("Enter 1 to draw")
+            bet = input("Enter Bet:")
+            print("\nEnter 1 to draw")
             print("Enter any key to exit\n")
-            if input() == "1":
+            x = input()
+            if x == "1":
                 player_hand_count = 0
                 #first card
                 card = draw_card(deck_id, 1)
@@ -70,6 +74,8 @@ def manual_play():
                         break 
                 if player_hand_count > 21:
                     print("Dealer Wins !\n\n")
+                    money_to_bet -= int(bet)
+                    print("Current Wallet:", money_to_bet)
                     dealer_hand_count = 0
                     #first card
                     card = draw_card(deck_id, 1)
@@ -92,23 +98,26 @@ def manual_play():
                         print("Dealer Strength:", dealer_hand_count)
                     if ((dealer_hand_count > 21) or (player_hand_count > dealer_hand_count)):
                         print("Player Wins !\n\n")
+                        money_to_bet += int(bet)
+                        print("Current Wallet:", money_to_bet)
+                    elif(player_hand_count == dealer_hand_count):
+                        print("Draw !\n\n")
                     else:
                         print("Dealer Wins !\n\n")
+                        money_to_bet -= int(bet)
+                        print("Current Wallet:", money_to_bet)
                 
 
             else:
-                break
+                exit()
         else: 
-            break
+            exit()
         
 def automated_play():
     print("Sorry, not implemented yet!")
     return None
 
 #event loop
-game = 1
-money_to_bet = 1000
-
 while True:
     print("Enter 1 for manual play")
     print("Enter 2 for card automated play")
