@@ -1,3 +1,4 @@
+from re import X
 import requests
 
 
@@ -149,16 +150,112 @@ def manual_play():
         
 def automated_play():
     print("Sorry, not implemented yet!")
-    return None
+    money_to_bet = input("Enter starting money:")
+    while not money_to_bet.isdigit():
+            print("\nPlease enter a number")
+            money_to_bet = input("Enter starting money:")
+    
+    money_to_bet = int(money_to_bet)
+    deck_id = generate_deck(1)
+    deck_count = 0
+    unit = 10
+    won = 0
+    lost = 0
+    draw = 0
+    while True:
+        if(won+lost+draw != 0):
+            print("Games Won %: ", (won)/(won+lost+draw))
+            print("Games Lost %: ", (lost)/(won+lost+draw))
+            print("Games Drawn %: ", (draw)/(won+lost+draw))
+        print("Current Money: ", money_to_bet)
+        game = 1
+        games_to_play = input("Enter number of games to simulate or enter x to exit:")
+        if games_to_play == 'x':
+            exit()
+        while not games_to_play.isdigit():
+            games_to_play = input("Enter number of games to simulate or enter x to exit:")
+        games_to_play = int(games_to_play)
+        
+        while game <= games_to_play :
+            print(game)
+            # set game bet
+            bet = (deck_count-1)*unit
+            if bet < unit:
+                bet = unit
+
+            # check deck size at start of round
+            card = draw_card(deck_id, 1)
+            if card['remaining'] <= 10:
+                deck_count = reshuffle(deck_id)
+            return_card(deck_id, card['cards'][0]['code'])   
+
+            # running game count
+            game += 1
+            
+            # player draw
+            player_hand_count = 0
+            # first card
+            card = draw_card(deck_id, 1)
+            player_hand_count += convert(card['cards'][0]['code'])
+            deck_count += count(convert(card['cards'][0]['code']))
+            # second card
+            card = draw_card(deck_id, 1)
+            player_hand_count += convert(card['cards'][0]['code'])
+            deck_count += count(convert(card['cards'][0]['code']))
+
+            # player hit loop
+            while player_hand_count < 16:
+                    card = draw_card(deck_id, 1)
+                    player_hand_count += convert(card['cards'][0]['code'])
+                    deck_count += count(convert(card['cards'][0]['code']))
+            
+            # condition when player bust, dealer hand still played
+            if player_hand_count > 21:
+                money_to_bet -= bet
+                dealer_hand_count = 0
+                #first card
+                card = draw_card(deck_id, 1)
+                dealer_hand_count += convert(card['cards'][0]['code'])
+                deck_count += count(convert(card['cards'][0]['code']))
+                #second card
+                card = draw_card(deck_id, 1)
+                dealer_hand_count += convert(card['cards'][0]['code'])
+                deck_count += count(convert(card['cards'][0]['code']))
+            # player didn't bust, dealer hand played
+            else:
+                dealer_hand_count = 0
+                #first card
+                card = draw_card(deck_id, 1)
+                dealer_hand_count += convert(card['cards'][0]['code'])
+                deck_count += count(convert(card['cards'][0]['code']))
+                #second card
+                card = draw_card(deck_id, 1)
+                dealer_hand_count += convert(card['cards'][0]['code'])
+                deck_count += count(convert(card['cards'][0]['code']))
+                # hit logic
+                while dealer_hand_count < 16:
+                    card = draw_card(deck_id, 1)
+                    dealer_hand_count += convert(card['cards'][0]['code'])
+                    deck_count += count(convert(card['cards'][0]['code']))
+                if ((dealer_hand_count > 21) or (player_hand_count > dealer_hand_count)):
+                    won += 1
+                    money_to_bet += bet
+                elif(player_hand_count == dealer_hand_count):
+                    draw += 1
+                else:
+                    lost += 1
+                    money_to_bet -= bet
 
 #event loop
 while True:
-    print("Enter 1 for manual play")
-    print("Enter 2 for card automated play")
-    print("Enter any key to exit\n")
-    if input() == "1":
+    x = input("""
+Enter 1 for manual play
+Enter 2 for card automated play
+Enter any key to exit\n
+""")
+    if x == "1":
         manual_play()
-    elif input() == "2":
+    if x == "2":
         automated_play()
     else:
         break
