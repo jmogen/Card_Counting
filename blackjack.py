@@ -1,4 +1,3 @@
-from re import X
 import requests
 
 
@@ -149,7 +148,6 @@ def manual_play():
             exit()
         
 def automated_play():
-    print("Sorry, not implemented yet!")
     money_to_bet = input("Enter starting money:")
     while not money_to_bet.isdigit():
             print("\nPlease enter a number")
