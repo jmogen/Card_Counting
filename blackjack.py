@@ -1,5 +1,3 @@
-from sre_constants import JUMP
-from turtle import goto
 import requests
 
 
@@ -12,11 +10,6 @@ def generate_deck(count):
 def draw_card(deckid, cards):
     response = requests.post(f"https://deckofcardsapi.com/api/deck/{deckid}/draw/?count={cards}")
     data = response.json()
-    # if data['remaining'] <= 10:
-    #     reshuffle(deckid)
-    #     print("Deck reshuffled")
-    # print('SECOND', response.content, '\n')
-    # print(data['cards'][0]['code'])
     return data
 
 def return_card(deckid, card):
@@ -48,6 +41,7 @@ def count(x):
         return(-1)
     else:
         return(0)
+
 #d31xyjxoan40
 
 def manual_play():
@@ -60,36 +54,41 @@ def manual_play():
     game = 1
     deck_count = 0
     while True:
-        #check deck size at start of round
+        # check deck size at start of round
         card = draw_card(deck_id, 1)
         if card['remaining'] <= 10:
             deck_count = reshuffle(deck_id)
             print("Deck reshuffled") 
-        return_card(deck_id, card['cards'][0]['code'])   \
+        return_card(deck_id, card['cards'][0]['code'])   
 
+        # running game count
         print(f"Game: {game}")
         game += 1
 
+        # running card count
         print("Deck Strength: ", deck_count)
         bet = input("Enter Bet:")
         while not bet.isdigit():
             print("\nPlease enter a number")
             bet = input("Enter Bet:")
 
+        # play a hand
         print("\nEnter 1 to draw")
         print("Enter any key to exit\n")
         x = input()
         if x == "1":
+            # player draw
             player_hand_count = 0
-            #first card
+            # first card
             card = draw_card(deck_id, 1)
             player_hand_count += convert(card['cards'][0]['code'])
             deck_count += count(convert(card['cards'][0]['code']))
-            #second card
+            # second card
             card = draw_card(deck_id, 1)
             player_hand_count += convert(card['cards'][0]['code'])
             deck_count += count(convert(card['cards'][0]['code']))
 
+            # hit loop
             while True:
                 print(f"Hand Strength: {player_hand_count}")
                 print("Enter 1 to hit")
@@ -98,9 +97,9 @@ def manual_play():
                     card = draw_card(deck_id, 1)
                     player_hand_count += convert(card['cards'][0]['code'])
                     deck_count += count(convert(card['cards'][0]['code']))
-                    
                 else:
                     break 
+            # condition when player bust, dealer hand still played
             if player_hand_count > 21:
                 print("Dealer Wins !\n\n")
                 money_to_bet -= int(bet)
@@ -114,6 +113,7 @@ def manual_play():
                 card = draw_card(deck_id, 1)
                 dealer_hand_count += convert(card['cards'][0]['code'])
                 deck_count += count(convert(card['cards'][0]['code']))
+            # player didn't bust, dealer hand played
             else:
                 dealer_hand_count = 0
                 #first card
@@ -125,6 +125,7 @@ def manual_play():
                 dealer_hand_count += convert(card['cards'][0]['code'])
                 deck_count += count(convert(card['cards'][0]['code']))
                 print("Dealer Strength:", dealer_hand_count)
+                # hit logic
                 while dealer_hand_count < 16:
                     card = draw_card(deck_id, 1)
                     dealer_hand_count += convert(card['cards'][0]['code'])
