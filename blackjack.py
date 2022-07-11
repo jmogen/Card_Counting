@@ -39,77 +39,76 @@ def convert(data):
 #d31xyjxoan40
 
 def manual_play():
-    money_to_bet = int(input("Enter starting money:"))
+    money_to_bet = input("Enter starting money:")
+    while not money_to_bet.isdigit():
+            print("\nPlease enter a number")
+            money_to_bet = input("Enter starting money:")
+    money_to_bet = int(money_to_bet)
+    deck_id = generate_deck(1)
     game = 1
     while True:
-        print('\nEnter 1 to play BlackJack')
-        print("Enter any key to exit\n")
-        if input() == "1":
-            deck_id = generate_deck(1)
-
-            print(f"Game: {game}")
-            game += 1
+        print(f"Game: {game}")
+        game += 1
+        bet = input("Enter Bet:")
+        while not bet.isdigit():
+            print("\nPlease enter a number")
             bet = input("Enter Bet:")
-            print("\nEnter 1 to draw")
-            print("Enter any key to exit\n")
-            x = input()
-            if x == "1":
-                player_hand_count = 0
+        print("\nEnter 1 to draw")
+        print("Enter any key to exit\n")
+        x = input()
+        if x == "1":
+            player_hand_count = 0
+            #first card
+            card = draw_card(deck_id, 1)
+            player_hand_count += convert(card['cards'][0]['code'])
+            #second card
+            card = draw_card(deck_id, 1)
+            player_hand_count += convert(card['cards'][0]['code'])
+
+            while True:
+                print(f"Hand Strength: {player_hand_count}")
+                print("Enter 1 to hit")
+                print("Enter any key to stay\n")
+                if input() == "1":
+                    card = draw_card(deck_id, 1)
+                    player_hand_count += convert(card['cards'][0]['code'])
+                    
+                else:
+                    break 
+            if player_hand_count > 21:
+                print("Dealer Wins !\n\n")
+                money_to_bet -= int(bet)
+                print("Current Wallet:", money_to_bet)
+                dealer_hand_count = 0
                 #first card
                 card = draw_card(deck_id, 1)
-                player_hand_count += convert(card['cards'][0]['code'])
+                dealer_hand_count += convert(card['cards'][0]['code'])
                 #second card
                 card = draw_card(deck_id, 1)
-                player_hand_count += convert(card['cards'][0]['code'])
-
-                while True:
-                    print(f"Hand Strength: {player_hand_count}")
-                    print("Enter 1 to hit")
-                    print("Enter any key to stay\n")
-                    if input() == "1":
-                        card = draw_card(deck_id, 1)
-                        player_hand_count += convert(card['cards'][0]['code'])
-                        
-                    else:
-                        break 
-                if player_hand_count > 21:
-                    print("Dealer Wins !\n\n")
-                    money_to_bet -= int(bet)
-                    print("Current Wallet:", money_to_bet)
-                    dealer_hand_count = 0
-                    #first card
-                    card = draw_card(deck_id, 1)
-                    dealer_hand_count += convert(card['cards'][0]['code'])
-                    #second card
-                    card = draw_card(deck_id, 1)
-                    dealer_hand_count += convert(card['cards'][0]['code'])
-                else:
-                    dealer_hand_count = 0
-                    #first card
-                    card = draw_card(deck_id, 1)
-                    dealer_hand_count += convert(card['cards'][0]['code'])
-                    #second card
+                dealer_hand_count += convert(card['cards'][0]['code'])
+            else:
+                dealer_hand_count = 0
+                #first card
+                card = draw_card(deck_id, 1)
+                dealer_hand_count += convert(card['cards'][0]['code'])
+                #second card
+                card = draw_card(deck_id, 1)
+                dealer_hand_count += convert(card['cards'][0]['code'])
+                print("Dealer Strength:", dealer_hand_count)
+                while dealer_hand_count < 16:
                     card = draw_card(deck_id, 1)
                     dealer_hand_count += convert(card['cards'][0]['code'])
                     print("Dealer Strength:", dealer_hand_count)
-                    while dealer_hand_count < 16:
-                        card = draw_card(deck_id, 1)
-                        dealer_hand_count += convert(card['cards'][0]['code'])
-                        print("Dealer Strength:", dealer_hand_count)
-                    if ((dealer_hand_count > 21) or (player_hand_count > dealer_hand_count)):
-                        print("Player Wins !\n\n")
-                        money_to_bet += int(bet)
-                        print("Current Wallet:", money_to_bet)
-                    elif(player_hand_count == dealer_hand_count):
-                        print("Draw !\n\n")
-                    else:
-                        print("Dealer Wins !\n\n")
-                        money_to_bet -= int(bet)
-                        print("Current Wallet:", money_to_bet)
-                
-
-            else:
-                exit()
+                if ((dealer_hand_count > 21) or (player_hand_count > dealer_hand_count)):
+                    print("Player Wins !\n\n")
+                    money_to_bet += int(bet)
+                    print("Current Wallet:", money_to_bet)
+                elif(player_hand_count == dealer_hand_count):
+                    print("Draw !\n\n")
+                else:
+                    print("Dealer Wins !\n\n")
+                    money_to_bet -= int(bet)
+                    print("Current Wallet:", money_to_bet)
         else: 
             exit()
         
