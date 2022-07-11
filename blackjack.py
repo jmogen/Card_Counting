@@ -71,6 +71,9 @@ def manual_play():
         while not bet.isdigit():
             print("\nPlease enter a number")
             bet = input("Enter Bet:")
+        while int(bet) < 10:
+            print("\nMinimum bet is 10")
+            bet = input("Enter Bet:")
 
         # play a hand
         print("\nEnter 1 to draw")
