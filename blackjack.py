@@ -14,13 +14,18 @@ def draw_card(deckid, cards):
     data = response.json()
     # if data['remaining'] <= 10:
     #     reshuffle(deckid)
+    #     print("Deck reshuffled")
     # print('SECOND', response.content, '\n')
     # print(data['cards'][0]['code'])
     return data
 
+def return_card(deckid, card):
+    requests.post(f"https://deckofcardsapi.com/api/deck/{deckid}/return/?cards={card}")
+    return None
+
 def reshuffle(deckid):
     requests.post(f"https://deckofcardsapi.com/api/deck/{deckid}/shuffle")
-    return None
+    return 0
 
 def convert(data):
     if data[0] == 'A':
@@ -36,6 +41,13 @@ def convert(data):
     else:
         return int(data[0])
 
+def count(x):
+    if x < 7:
+        return(1)
+    elif x > 9:
+        return(-1)
+    else:
+        return(0)
 #d31xyjxoan40
 
 def manual_play():
@@ -46,13 +58,24 @@ def manual_play():
     money_to_bet = int(money_to_bet)
     deck_id = generate_deck(1)
     game = 1
+    deck_count = 0
     while True:
+        #check deck size at start of round
+        card = draw_card(deck_id, 1)
+        if card['remaining'] <= 10:
+            deck_count = reshuffle(deck_id)
+            print("Deck reshuffled") 
+        return_card(deck_id, card['cards'][0]['code'])   \
+
         print(f"Game: {game}")
         game += 1
+
+        print("Deck Strength: ", deck_count)
         bet = input("Enter Bet:")
         while not bet.isdigit():
             print("\nPlease enter a number")
             bet = input("Enter Bet:")
+
         print("\nEnter 1 to draw")
         print("Enter any key to exit\n")
         x = input()
@@ -61,9 +84,11 @@ def manual_play():
             #first card
             card = draw_card(deck_id, 1)
             player_hand_count += convert(card['cards'][0]['code'])
+            deck_count += count(convert(card['cards'][0]['code']))
             #second card
             card = draw_card(deck_id, 1)
             player_hand_count += convert(card['cards'][0]['code'])
+            deck_count += count(convert(card['cards'][0]['code']))
 
             while True:
                 print(f"Hand Strength: {player_hand_count}")
@@ -72,6 +97,7 @@ def manual_play():
                 if input() == "1":
                     card = draw_card(deck_id, 1)
                     player_hand_count += convert(card['cards'][0]['code'])
+                    deck_count += count(convert(card['cards'][0]['code']))
                     
                 else:
                     break 
@@ -83,21 +109,26 @@ def manual_play():
                 #first card
                 card = draw_card(deck_id, 1)
                 dealer_hand_count += convert(card['cards'][0]['code'])
+                deck_count += count(convert(card['cards'][0]['code']))
                 #second card
                 card = draw_card(deck_id, 1)
                 dealer_hand_count += convert(card['cards'][0]['code'])
+                deck_count += count(convert(card['cards'][0]['code']))
             else:
                 dealer_hand_count = 0
                 #first card
                 card = draw_card(deck_id, 1)
                 dealer_hand_count += convert(card['cards'][0]['code'])
+                deck_count += count(convert(card['cards'][0]['code']))
                 #second card
                 card = draw_card(deck_id, 1)
                 dealer_hand_count += convert(card['cards'][0]['code'])
+                deck_count += count(convert(card['cards'][0]['code']))
                 print("Dealer Strength:", dealer_hand_count)
                 while dealer_hand_count < 16:
                     card = draw_card(deck_id, 1)
                     dealer_hand_count += convert(card['cards'][0]['code'])
+                    deck_count += count(convert(card['cards'][0]['code']))
                     print("Dealer Strength:", dealer_hand_count)
                 if ((dealer_hand_count > 21) or (player_hand_count > dealer_hand_count)):
                     print("Player Wins !\n\n")
