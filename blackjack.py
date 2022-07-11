@@ -69,10 +69,10 @@ def manual_play():
         print("Deck Strength: ", deck_count)
         bet = input("Enter Bet:")
         while not bet.isdigit():
-            print("\nPlease enter a number")
+            print("\nError, please enter a number")
             bet = input("Enter Bet:")
         while int(bet) < 10:
-            print("\nMinimum bet is 10")
+            print("\nThe house minimum bet is 10, please try again")
             bet = input("Enter Bet:")
 
         # play a hand
