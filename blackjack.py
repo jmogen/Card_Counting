@@ -422,7 +422,8 @@ def win_graph():
 while True:
     x = input("""
 Enter 1 for manual play
-Enter 2 for card automated play
+Enter 2 for automated play
+Enter 3 for graph generation
 Enter any key to exit\n
 """)
     if x == "1":
