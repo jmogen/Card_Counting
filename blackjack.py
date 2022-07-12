@@ -1,5 +1,6 @@
 import requests
-
+import numpy as np
+import pandas as pd 
 
 def generate_deck(count):
     response = requests.post(f"https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count={count}")
@@ -157,6 +158,10 @@ def automated_play():
     deck_id = generate_deck(1)
     deck_count = 0
     unit = 10
+    rounds = 1
+    total_win = 0
+    total_lost = 0
+    total_draw= 0
     won = 0
     lost = 0
     draw = 0
@@ -165,9 +170,24 @@ def automated_play():
             print("Games Won %: ", (won)/(won+lost+draw))
             print("Games Lost %: ", (lost)/(won+lost+draw))
             print("Games Drawn %: ", (draw)/(won+lost+draw))
+
+            data[f'Test {rounds}'] = win_results
+            rounds += 1
+        print(data)
         print("Current Money: ", money_to_bet)
+        
+        total_win += won
+        total_lost += lost
+        total_draw += draw
+        
+        # reset stats before new simulation
+        won = 0
+        lost = 0
+        draw = 0
         game = 1
+        win_results = []
         games_to_play = input("Enter number of games to simulate or enter x to exit:")
+        
         if games_to_play == 'x':
             exit()
         while not games_to_play.isdigit():
@@ -243,6 +263,16 @@ def automated_play():
                 else:
                     lost += 1
                     money_to_bet -= bet
+            if(won+lost+draw != 0):
+                win_results.append((won)/(won+lost+draw))
+
+##################
+##################
+# Win percentage over 1000 games
+
+data = pd.DataFrame()
+
+
 
 #event loop
 while True:
@@ -255,5 +285,6 @@ Enter any key to exit\n
         manual_play()
     if x == "2":
         automated_play()
+        
     else:
         break
