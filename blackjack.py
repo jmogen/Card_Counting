@@ -270,6 +270,8 @@ def automated_play():
             # running game count
             game += 1
 
+            
+
 def graph_automated_play():
     money_to_bet = input("Enter starting money:")
     while not money_to_bet.isdigit():
@@ -309,18 +311,12 @@ def graph_automated_play():
 
         
         while simulation <= simulations:
-            print("Simulations", simulation)
+            print("Simulation", simulation)
             if(won+lost+draw != 0):
-                print("Games Won %: ", (won)/(won+lost+draw))
-                print("Games Lost %: ", (lost)/(won+lost+draw))
-                print("Games Drawn %: ", (draw)/(won+lost+draw))
 
                 data[f'Test {rounds}'] = win_results
                 plt.plot(np.arange(data.shape[0]), data[f'Test {rounds}'], color='black', alpha=0.2)
                 rounds += 1
-
-            print(data)
-            print("Current Money: ", money_to_bet)
             
             total_win += won
             total_lost += lost
@@ -415,7 +411,7 @@ def win_graph():
     plt.xlabel("Games Played")
     plt.ylabel("Win Percentage")
     plt.legend()
-    plt.savefig('100 Game Win Analysis')
+    plt.savefig('2000 Game Win Analysis')
     plt.show()
 
 #event loop
