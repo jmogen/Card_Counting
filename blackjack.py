@@ -270,7 +270,32 @@ def automated_play():
             
             # running game count
             game += 1
-           
+
+def database_gen(games):
+    games = 'Games_'+str(games)
+    con = sql.connect('game_data_storage.db')
+    cur = con.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS " + games + " (ID integer primary key autoincrement)")
+    result = cur.execute("SELECT * FROM " + games)
+    items = cur.fetchall()
+    print(items)
+    con.commit()
+    con.close()
+
+def insert_entry(games, win_results):
+    games = 'Games:'+str(games)
+    con = sql.connect('game_data_storage.db')
+    cur = con.cursor()
+    cursor = con.execute('SELECT * FROM name WHERE name="{games}"')
+    names = list(map(lambda x: x[0], cursor.description))
+    names = str(int(names[-1])+1)
+    cur.execute("ALTER TABLE ? ADD COLUMN ? REAL", (games, names))
+    for item in win_results:
+        cur.execute("INSERT INTO name (value) VALUES (?) WHERE name='{games}' AND value='{names}'", (games, names, item))
+    result = cur.execute("SELECT * FROM name WHERE name='{games}'")
+    print(result)
+    con.commit()
+    con.close()
 
 def graph_automated_play():
     money_to_bet = input("Enter starting money:")
@@ -298,6 +323,7 @@ def graph_automated_play():
         while not games_to_play.isdigit():
             games_to_play = input("Enter number of games to simulate or enter x to exit:")
         games_to_play = int(games_to_play)
+        database_gen(games_to_play)
 
 
         simulations = input("Enter number of times to repeat or enter x to exit:")
@@ -312,11 +338,6 @@ def graph_automated_play():
         
         while simulation <= simulations:
             print("Simulation", simulation)
-            if(won+lost+draw != 0):
-
-                data[f'Test {rounds}'] = win_results
-                plt.plot(np.arange(data.shape[0]), data[f'Test {rounds}'], color='black', alpha=0.2)
-                rounds += 1
             
             total_win += won
             total_lost += lost
@@ -400,6 +421,12 @@ def graph_automated_play():
                 # running game count
                 game += 1
             simulation += 1
+            if(won+lost+draw != 0):
+                insert_entry(games_to_play, win_results)
+
+                data[f'Test {rounds}'] = win_results
+                plt.plot(np.arange(data.shape[0]), data[f'Test {rounds}'], color='black', alpha=0.2)
+                rounds += 1
 
 # initialize dataframe
 data = pd.DataFrame()
@@ -418,11 +445,11 @@ def win_graph():
 def main():
     while True:
         x = input("""
-    Enter 1 for manual play
-    Enter 2 for automated play
-    Enter 3 for graph generation
-    Enter any key to exit\n
-    """)
+Enter 1 for manual play
+Enter 2 for automated play
+Enter 3 for graph generation
+Enter any key to exit\n
+""")
         if x == "1":
             manual_play()
         if x == "2":
