@@ -278,7 +278,10 @@ def database_gen(games):
     games = 'Games_'+str(games)
     con = sql.connect('game_data_storage.db')
     cur = con.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS games_played (1 integer primary key autoincrement)")
+    cur.execute("CREATE TABLE IF NOT EXISTS " + games + " (ID integer primary key autoincrement)")
+    result = cur.execute("SELECT * FROM " + games)
+    items = cur.fetchall()
+    print(items)
     con.commit()
     con.close()
 
