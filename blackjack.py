@@ -271,14 +271,14 @@ def automated_play():
             # running game count
             game += 1
 
+
+# this was originally going to generate seperate tables based on the number of games played in the simulation
+# I have realized it is likely less logic intensive if I simply use one large table and filter by number of rows when I plot the data later
 def database_gen(games):
     games = 'Games_'+str(games)
     con = sql.connect('game_data_storage.db')
     cur = con.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS " + games + " (ID integer primary key autoincrement)")
-    result = cur.execute("SELECT * FROM " + games)
-    items = cur.fetchall()
-    print(items)
+    cur.execute("CREATE TABLE IF NOT EXISTS games_played (1 integer primary key autoincrement)")
     con.commit()
     con.close()
 
@@ -286,14 +286,14 @@ def insert_entry(games, win_results):
     games = 'Games:'+str(games)
     con = sql.connect('game_data_storage.db')
     cur = con.cursor()
-    cursor = con.execute('SELECT * FROM name WHERE name="{games}"')
+    cursor = con.execute('SELECT * FROM games_played')
     names = list(map(lambda x: x[0], cursor.description))
     names = str(int(names[-1])+1)
-    cur.execute("ALTER TABLE ? ADD COLUMN ? REAL", (games, names))
+    cur.execute("ALTER TABLE games_played ADD COLUMN " + names + " REAL")
+    
     for item in win_results:
-        cur.execute("INSERT INTO name (value) VALUES (?) WHERE name='{games}' AND value='{names}'", (games, names, item))
-    result = cur.execute("SELECT * FROM name WHERE name='{games}'")
-    print(result)
+        cur.execute("INSERT INTO games_played "+ names + " VALUES (?)", (item,))
+    
     con.commit()
     con.close()
 
