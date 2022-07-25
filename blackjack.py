@@ -150,6 +150,7 @@ def manual_play():
         else: 
             exit()
 
+
 def automated_play():
     money_to_bet = input("Enter starting money:")
     while not money_to_bet.isdigit():
@@ -269,8 +270,7 @@ def automated_play():
             
             # running game count
             game += 1
-
-            
+           
 
 def graph_automated_play():
     money_to_bet = input("Enter starting money:")
@@ -415,19 +415,23 @@ def win_graph():
     plt.show()
 
 #event loop
-while True:
-    x = input("""
-Enter 1 for manual play
-Enter 2 for automated play
-Enter 3 for graph generation
-Enter any key to exit\n
-""")
-    if x == "1":
-        manual_play()
-    if x == "2":
-        automated_play()
-    if x == "3":
-        graph_automated_play()
-        win_graph()
-    else:
-        break
+def main():
+    while True:
+        x = input("""
+    Enter 1 for manual play
+    Enter 2 for automated play
+    Enter 3 for graph generation
+    Enter any key to exit\n
+    """)
+        if x == "1":
+            manual_play()
+        if x == "2":
+            automated_play()
+        if x == "3":
+            graph_automated_play()
+            win_graph()
+        else:
+            break
+
+if __name__ == "__main__":
+    main()
