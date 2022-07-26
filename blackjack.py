@@ -278,22 +278,38 @@ def database_gen(games):
     games = 'Games_'+str(games)
     con = sql.connect('game_data_storage.db')
     cur = con.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS games_played (1 integer primary key autoincrement)")
+    cur.execute("CREATE TABLE IF NOT EXISTS " + f"{games} " + "(Simulation_1 text)")
+    
     con.commit()
+    cur.execute("SELECT * FROM " + f"{games}")
+    items = cur.fetchall()
+    print(items)
     con.close()
+    print("Table Created")
 
 def insert_entry(games, win_results):
-    games = 'Games:'+str(games)
+    games = 'Games_'+str(games)
     con = sql.connect('game_data_storage.db')
     cur = con.cursor()
-    cursor = con.execute('SELECT * FROM games_played')
+    items = cur.fetchall()
+    print ('TEST', items)
+    cursor = con.execute("SELECT * FROM " + f"{games}")
     names = list(map(lambda x: x[0], cursor.description))
-    names = str(int(names[-1])+1)
-    cur.execute("ALTER TABLE games_played ADD COLUMN " + names + " REAL")
     
+    names = str(int(names[-1][-1])+1)
+    if not items:
+        names = '1'
+    else:
+        cur.execute("ALTER TABLE " + f"{games}" + " ADD COLUMN " + f'Simulation_{names}' + " text")
+    print(names)
     for item in win_results:
-        cur.execute("INSERT INTO games_played "+ names + " VALUES (?)", (item,))
+        item = str(item)
+        print("INSERT INTO " + f"{games} " + f'(Simulation_{names}) ' + "VALUES " + f"{item}")
+        cur.execute("INSERT INTO " + f"{games} " + f'(Simulation_{names}) ' + "VALUES " + f"{item}")
     
+    items = cur.fetchall()
+    print(items)
+
     con.commit()
     con.close()
 
@@ -323,7 +339,7 @@ def graph_automated_play():
         while not games_to_play.isdigit():
             games_to_play = input("Enter number of games to simulate or enter x to exit:")
         games_to_play = int(games_to_play)
-        database_gen(games_to_play)
+        #database_gen(games_to_play)
 
 
         simulations = input("Enter number of times to repeat or enter x to exit:")
@@ -381,6 +397,7 @@ def graph_automated_play():
                 
                 # condition when player bust, dealer hand still played
                 if player_hand_count > 21:
+                    lost += 1
                     money_to_bet -= bet
                     dealer_hand_count = 0
                     #first card
@@ -417,16 +434,17 @@ def graph_automated_play():
                         money_to_bet -= bet
                 if(won+lost+draw != 0):
                     win_results.append((won)/(won+lost+draw)-0.5)
+                    #print(win_results)
                 
                 # running game count
                 game += 1
             simulation += 1
-            if(won+lost+draw != 0):
-                insert_entry(games_to_play, win_results)
+            #if(won+lost+draw != 0):
+                #insert_entry(games_to_play, win_results)
 
-                data[f'Test {rounds}'] = win_results
-                plt.plot(np.arange(data.shape[0]), data[f'Test {rounds}'], color='black', alpha=0.2)
-                rounds += 1
+            data[f'Test {rounds}'] = win_results
+            plt.plot(np.arange(data.shape[0]), data[f'Test {rounds}'], color='black', alpha=0.2)
+            rounds += 1
 
 # initialize dataframe
 data = pd.DataFrame()
