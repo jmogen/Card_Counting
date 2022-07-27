@@ -353,6 +353,8 @@ def graph_automated_play():
 
         
         while simulation <= simulations:
+            #generate new deck for each sim
+            deck_id = generate_deck(1)
             print("Simulation", simulation)
             
             total_win += won
