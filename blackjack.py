@@ -12,8 +12,13 @@ def generate_deck(count):
 
 def draw_card(deckid, cards):
     response = requests.post(f"https://deckofcardsapi.com/api/deck/{deckid}/draw/?count={cards}")
-    data = response.json()
-    return data
+    response.raise_for_status()  # raises exception when not a 2xx response
+    #print(response.status_code)
+    if response.status_code == 200:
+        data = response.json()
+        return data
+    else:
+        draw_card(deckid, cards)
 
 def return_card(deckid, card):
     requests.post(f"https://deckofcardsapi.com/api/deck/{deckid}/return/?cards={card}")
@@ -354,7 +359,7 @@ def graph_automated_play():
         
         while simulation <= simulations:
             #generate new deck for each sim
-            deck_id = generate_deck(1)
+            #deck_id = generate_deck(1)
             print("Simulation", simulation)
             
             total_win += won
