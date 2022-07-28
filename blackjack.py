@@ -12,7 +12,7 @@ def generate_deck(count):
 
 def draw_card(deckid, cards):
     response = requests.post(f"https://deckofcardsapi.com/api/deck/{deckid}/draw/?count={cards}")
-    response.raise_for_status()  # raises exception when not a 2xx response
+    #response.raise_for_status()  # raises exception when not a 2xx response
     #print(response.status_code)
     try:
         data = response.json()
