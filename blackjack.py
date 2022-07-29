@@ -12,16 +12,18 @@ def generate_deck(count):
 
 def draw_card(deckid, cards):
     response = requests.post(f"https://deckofcardsapi.com/api/deck/{deckid}/draw/?count={cards}")
-    #response.raise_for_status()  # raises exception when not a 2xx response
+    response.raise_for_status()  # raises exception when not a 2xx response
     #print(response.status_code)
-    try:
+    # try:
+    #     data = response.json()
+    #     return data
+    # except:
+    #     draw_card(deckid, cards)
+    if response.status_code == 200:
         data = response.json()
-        return data
-    except:
+        return data 
+    else:
         draw_card(deckid, cards)
-    # if response.status_code == 200:
-        
-    # else:
         
 
 def return_card(deckid, card):
