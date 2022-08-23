@@ -222,6 +222,7 @@ def automated_play():
             card = draw_card(deck_id, 1)
             if card['remaining'] <= 10:
                 deck_count = reshuffle(deck_id)
+                print("Deck reshuffled")
             return_card(deck_id, card['cards'][0]['code'])   
             
             # player draw
@@ -388,9 +389,12 @@ def graph_automated_play():
 
                 # check deck size at start of round
                 card = draw_card(deck_id, 1)
+                deck_count += count(convert(card['cards'][0]['code']))
+                #print(card['remaining'])
                 if card['remaining'] <= 10:
                     deck_count = reshuffle(deck_id)
-                return_card(deck_id, card['cards'][0]['code'])   
+                    print("Deck reshuffled")
+                #return_card(deck_id, card['cards'][0]['code'])   
                 
                 # player draw
                 player_hand_count = 0
