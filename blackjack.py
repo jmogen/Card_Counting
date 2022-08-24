@@ -1,3 +1,4 @@
+from types import NoneType
 import requests
 import numpy as np
 import pandas as pd 
@@ -17,6 +18,9 @@ def draw_card(deckid, cards):
     try:
         response = requests.post(f"https://deckofcardsapi.com/api/deck/{deckid}/draw/?count={cards}")
         data = response.json()
+        # if data['cards'] == NoneType or data['cards'][0] == NoneType:
+        #     print("BUG:", data)
+        #     exit()
         return data
     except:
         draw_card(deckid, cards)
